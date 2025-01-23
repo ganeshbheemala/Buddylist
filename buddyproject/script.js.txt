@@ -1,0 +1,165 @@
+var statuscheck = {
+	1: "one",
+	2: "two",
+	3: "three",
+	4: "four",
+};
+
+let users_json = [{
+		"userId": "USR00001",
+		"name": "Andrew Grudde",
+		"profilePicture":
+			"https://assets-prd.ignimgs.com/2022/12/12/jon-snow-spinoff-1670857671219.jpg",
+		"statusMessage": "We become what we think about!",
+		"presence": 1,
+	},
+	{
+		"userId": "USR00002",
+		"name": "Steve Hughes",
+		"profilePicture":
+			"https://preview.redd.it/hlxen8gtwpm01.jpg?width=640&crop=smart&auto=webp&v=enabled&s=a3c43bcbfc1db31d542ef67071559264358b3d2b",
+		"statusMessage": "A positive mindset brings positivethings.",
+		"presence": 2,
+	},
+	{
+		"userId": "USR00003",
+		"name": "Kathy Smiley",
+		"profilePicture":
+			"https://mir-s3-cdn-cf.behance.net/project_modules/fs/6a3f5237411193.573f25019c8bf.jpg",
+		"statusMessage": "One small positive thought can change your whole day",
+		"presence": 3,
+	},
+	{
+		"userId": "USR00004",
+		"name": "Steve Dunk",
+		"profilePicture":
+			"https://images.nightcafe.studio/jobs/mWfF1s7OOVg5DMTYiNZ8/mWfF1s7OOVg5DMTYiNZ8--4--qccau.jpg?tr=w-1600,c-at_max",
+		"statusMessage": "I am a rockstar",
+		"presence": 1,
+	},
+	{
+		"userId": "USR00005",
+		"name": "Maria Dopala",
+		"profilePicture":
+			"https://64.media.tumblr.com/21de4501827aba1c6463ce2ae6a36780/tumblr_ps5le9xxRb1w9a5vgo1_1280.jpg",
+		"statusMessage": "I am using Gradious messenger",
+		"presence": 4,
+}];
+
+var buttonsubmit = document.getElementById("btnsubmit")
+
+var s='';
+var add_json;
+var userid = 6;
+
+function display(){	
+	s='';
+	for(let i=0;i<users_json.length;i++){
+		var bordercolor = statuscheck[users_json[i].presence];
+		s+='<div class="user" id="'+users_json[i].userId+'"><div class="img-container"><img src="'+users_json[i]["profilePicture"]+'" class="user-image '+bordercolor+'" id="img'+users_json[i].userId+'" alt="userimage"/></div><div class="user-detail"><p class="user-name" id="username'+users_json[i].userId+'">'+users_json[i].name+'</p><p class="user-message" id="usermessage'+users_json[i].userId+'">'+users_json[i].statusMessage+'</p></div><div class="three-btn"><div class="dropdown"><a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" ><i class="bi bi-three-dots-vertical"></i></a><ul class="dropdown-menu"><li><button id="'+users_json[i].userId+'" onclick="deleteItem('+users_json[i].userId+')" class="dropdown-item">Delete</button></li><li><button id="update-'+users_json[i].userId+'" onclick="updateItem('+users_json[i].userId+')" class="dropdown-item">Update</button></li></ul></div></div></div>';
+	}
+	document.getElementById("root").innerHTML = s;
+}
+function visibileUserForm(){
+	document.getElementById("addUserForm").style.visibility = "visible";
+}
+function addUser(event){
+    event.preventDefault();
+    console.log('passed');
+	console.log(document.getElementById('btnsubmit').innerHTML)
+	if(document.getElementById('btnsubmit').innerHTML == "Add User"){
+		console.log('passed');
+		let name = document.getElementById("name").value;
+		let statusMessage = document.getElementById("statusMessage").value;
+		let profilelink = document.getElementById("profilePicLink").value;
+		let presence = document.getElementById("presence").value;
+
+		console.log('progress')
+
+		add_json = {
+			"userId": "USR0000"+userid,
+			"name" : name,
+			"profilePicture" : profilelink,
+			"statusMessage" : statusMessage,
+			"presence" : Number(presence),
+		}
+		userid+=1;
+		users_json.unshift(add_json);
+		console.log(users_json)
+		display();
+		document.getElementById("name").value = '';
+		document.getElementById("statusMessage").value = '';
+		document.getElementById("profilePicLink").value = '';
+		document.getElementById("addUserForm").style.visibility = "hidden";
+	}
+}
+
+console.log(users_json);
+
+function deleteItem(useriddelete){
+	let inlist = 0;
+	console.log(useriddelete[0].id)
+	document.getElementById(useriddelete[0].id).style.display = "none";
+	for(let i=0;i<users_json.length;i++){
+		if(users_json[i].userId == useriddelete[0].id){
+			inlist = i;
+			break;
+		}
+	}
+	users_json.splice(inlist,1);
+	console.log(users_json)
+}
+
+let updatesubmit;
+
+function updateItem(useridupdate){
+    console.log(useridupdate[0].id);
+    document.getElementById("addUserForm").style.visibility = "visible";
+    document.getElementById("btnsubmit").remove();
+    let bot = document.createElement("button");
+    bot.setAttribute("class","btn");
+    bot.setAttribute("id",'btnsubmit2')
+    bot.setAttribute("onclick","updateuser("+useridupdate[0].id+")")
+    bot.innerHTML = "Update Details"
+    var name = document.getElementById("username"+useridupdate[0].id).innerHTML;
+	var statusMessage = document.getElementById("usermessage"+useridupdate[0].id).innerHTML;
+	var profilelink = document.getElementById("img"+useridupdate[0].id).src;
+
+    document.getElementById("name").value = name;
+	document.getElementById("statusMessage").value = statusMessage;
+	document.getElementById("profilePicLink").value = profilelink;
+
+    document.getElementById("submitdiv").appendChild(bot);
+    updatesubmit = document.getElementById("btnsubmit2")
+    updatesubmit.addEventListener("click",function(){
+        updateuser(event,useridupdate[0].id)
+    })
+    console.log(updatesubmit)
+
+}
+console.log(updatesubmit)
+
+function updateuser(event,params){
+    event.preventDefault();
+    console.log(params)
+    document.getElementById("username"+params).innerHTML = document.getElementById("name").value;
+	console.log(params)
+	console.log("username"+params)
+	document.getElementById("usermessage"+params).innerHTML = document.getElementById("statusMessage").value;
+	document.getElementById("img"+params).src = document.getElementById("profilePicLink").value;
+	const list = document.getElementById("img"+params).classList;
+	list.remove(list[1])
+	list.add(statuscheck[document.getElementById("presence").value])
+    document.getElementById("name").value = '';
+	document.getElementById("statusMessage").value = '';
+	document.getElementById("profilePicLink").value = '';
+    document.getElementById("btnsubmit2").remove();
+    let b = document.createElement("button");
+    b.setAttribute("class","btn");
+    b.setAttribute("id",'btnsubmit')
+    b.setAttribute("onclick","addUser()")
+    b.innerHTML = "Add User"
+    document.getElementById("submitdiv").appendChild(b);
+    document.getElementById("addUserForm").style.visibility = "hidden";
+}
+buttonsubmit.addEventListener("click",addUser)
